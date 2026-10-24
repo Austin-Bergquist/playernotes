@@ -1,12 +1,13 @@
 <!--
   VERSION HISTORY (newest first)
+  v1.0.1  2026-10-23  Current version line.
   v1.0.0  2026-10-23  First README.
 -->
 # Player Notes
 
 Stats for every NFL player, sortable by team, position and any stat column, plus fantasy rosters
 and your own notes on each player. Installs on your phone and PC and works offline with the last
-stats it downloaded. Current version: **v1.0.0** (see `CHANGELOG.md`).
+stats it downloaded. Current version: **v1.0.1** (see `CHANGELOG.md`).
 
 Live at: **https://austin-bergquist.github.io/playernotes/**
 

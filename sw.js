@@ -1,13 +1,14 @@
 /*
   Player Notes service worker — makes the app open offline.
   VERSION HISTORY (newest first)
+  v1.0.1  2026-10-23  Cache bump for the IDP ranking fix.
   v1.0.0  2026-10-23  First build: app shell, logos and icons cached on
                       install; fonts cached the first time they're used.
                       Player stats are saved by the app itself (IndexedDB),
                       not here, so they survive cache bumps.
   Bump CACHE when shipping a new version so phones pick up the update.
 */
-const CACHE = "playernotes-v1.0.0";
+const CACHE = "playernotes-v1.0.1";
 const SHELL = ["./", "index.html", "manifest.webmanifest",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png", "icons/favicon-32.png",
   "brand/logo-horizontal.svg", "brand/logo-horizontal-white.svg", "brand/symbol.svg"];

@@ -12,6 +12,10 @@
   copying an older file over index.html. Your rosters and notes live in
   the browser's on-device storage and are NOT touched by swapping versions.
 
+  v1.0.1  2026-10-23  Defensive players (DL/LB/DB) no longer show up in the
+                      All / FLEX fantasy rankings; their IDP points show
+                      when you pick DL, LB or DB. Game log shows 0.0 for a
+                      game played with no points instead of "–".
   v1.0.0  2026-10-23  First build, on the RaceNotes / Receipt Log pattern:
                       - Every NFL player from Sleeper's free public API
                         (no key): season totals, single weeks, and
@@ -290,9 +294,9 @@ footer .brand img{display:block;height:20px;width:auto}
 <script>
 "use strict";
 /* =================================================================
-   Player Notes v1.0.0 — see VERSION HISTORY at the top of this file
+   Player Notes v1.0.1 — see VERSION HISTORY at the top of this file
    ================================================================= */
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 const API = "https://api.sleeper.app/v1";
 const API_SCHED = "https://api.sleeper.app/schedule/nfl/regular/";
 const API_PLAYER = "https://api.sleeper.com/stats/nfl/player/";
@@ -521,11 +525,14 @@ function inChip(p, chip) {
   if (chip === "FLEX") return g === "RB" || g === "WR" || g === "TE";
   return g === chip;
 }
-function fpts(s, p) {
+/* Fantasy points. Defensive players (DL/LB/DB) only score in IDP leagues, so their
+   IDP points count only when you're looking at an IDP position (or ranking within it). */
+function fpts(s, p, idpOk = IDP.has(S.pos)) {
   if (!s) return null;
+  const idp = p && IDP.has(groupOf(p));
+  if (idp) return idpOk ? (s.pts_idp ?? (s.gp ? 0 : null)) : null;
   const v = s[SCORE_KEY[S.scoring]];
   if (v != null) return v;
-  if (p && IDP.has(groupOf(p)) && s.pts_idp != null) return s.pts_idp;
   return s.gp ? 0 : null;
 }
 function fmt(v, d = 0) {
@@ -699,7 +706,7 @@ function computeRanks() {
   const by = {};
   for (const id in S.stats) {
     const p = S.players[id]; if (!p) continue;
-    const v = fpts(S.stats[id], p); if (v == null || v <= 0) continue;
+    const v = fpts(S.stats[id], p, true); if (v == null || v <= 0) continue;
     (by[groupOf(p)] ||= []).push([id, v]);
   }
   S.ranks = {};
@@ -1049,7 +1056,7 @@ async function openPlayer(pid) {
       let opp = e && e.opponent ? (e.is_away_team ? "@ " : "vs ") + e.opponent : null;
       if (!opp && sched && p.team) { const o = (sched.opp[w] || {})[p.team]; opp = o ? (o.home ? "vs " : "@ ") + o.opp : "BYE"; }
       if (played) { games++; totPts += ptsOf(s) || 0; for (const k of set) { const v = STAT[k].g(s); if (typeof v === "number" && !STAT[k].d) tot[k] = (tot[k] || 0) + v; } }
-      return `<tr><td class="l">${w}</td><td class="l">${esc(opp || "–")}</td><td class="pts${played ? "" : " dim"}">${played ? fmt(ptsOf(s), 1) : (opp === "BYE" ? "" : "–")}</td>${set.map(k => { const v = played ? STAT[k].g(s) : null; return `<td class="${v == null ? "dim" : ""}">${played ? fmt(v ?? null, STAT[k].d) : ""}</td>`; }).join("")}</tr>`;
+      return `<tr><td class="l">${w}</td><td class="l">${esc(opp || "–")}</td><td class="pts${played ? "" : " dim"}">${played ? fmt(ptsOf(s) ?? 0, 1) : (opp === "BYE" ? "" : "–")}</td>${set.map(k => { const v = played ? STAT[k].g(s) : null; return `<td class="${v == null ? "dim" : ""}">${played ? fmt(v ?? null, STAT[k].d) : ""}</td>`; }).join("")}</tr>`;
     }).join("");
     $("logBox").innerHTML = games || rowsHtml ? `<table><thead><tr><th class="l">Wk</th><th class="l">Opp</th><th>FPts</th>${set.map(k => `<th title="${esc(STAT[k].t || "")}">${esc(STAT[k].l)}</th>`).join("")}</tr></thead>
       <tbody>${rowsHtml}</tbody>

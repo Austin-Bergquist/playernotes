@@ -1,11 +1,18 @@
 <!--
   VERSION HISTORY (newest first)
+  v1.0.1  2026-10-23  Added v1.0.1.
   v1.0.0  2026-10-23  First entry.
 -->
 # Player Notes — Changelog
 
 Every past build is kept in `versions/`. To roll back, copy an older file over `index.html`, bump
 `CACHE` in `sw.js`, and push. Rosters and notes stored on your devices are not affected.
+
+## v1.0.1 — 2026-10-23 — IDP ranking fix
+- Defensive players (DL / LB / DB) no longer appear among the top fantasy scorers in the All and
+  FLEX views — they only score in IDP leagues. Pick DL, LB or DB to see them ranked by IDP points.
+- The game log shows 0.0 for a game the player played but didn't score in, instead of "–".
+- Files: `versions/playernotes-v1.0.1.html`
 
 ## v1.0.0 — 2026-10-23 — First build
 - Installable offline web app (PWA) on the RaceNotes / Receipt Log pattern: one `index.html`,
